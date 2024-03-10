@@ -1,0 +1,15 @@
+# IDE/OS specific
+.DS_Store
+.idea
+.vs_code
+
+# project related
+node_modules
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

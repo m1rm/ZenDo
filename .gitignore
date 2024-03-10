@@ -1,0 +1,4 @@
+# IDE/OS specific
+.DS_Store
+.idea
+.vs_code
