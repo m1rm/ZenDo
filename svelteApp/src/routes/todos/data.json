@@ -1,0 +1,39 @@
+{
+    "todos": [
+        {
+            "id": 1,
+            "text": "Style mock content",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        },
+        {
+            "id": 2,
+            "text": "Style nav",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        },
+        {
+            "id": 3,
+            "text": "Add header and footer",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        },
+        {
+            "id": 4,
+            "text": "Add CTAs without function",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        },
+        {
+            "id": 5,
+            "text": "Show it to Julian",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        }
+    ]
+}

@@ -34,3 +34,4 @@ Repo holding ToDo app practice projects
 - dockerize
 - add just
 - add docker compose for local development
+- install and bundle bootstrap instead of link include
