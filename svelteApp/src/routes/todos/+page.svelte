@@ -3,10 +3,11 @@
 </script>
 
 <h1>ToDos</h1>
+<div class="d-grid gap-2">
 {#each data.todos as todo}
-    <div class="list-group">
-        <label class="list-group-item d-flex gap-2">
-            <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="">
+    <div class="list-group ">
+        <label class="list-group-item py-2">
+            <input class="form-check-input flex-shrink-0" type="checkbox" value="">
             <span>
                 { todo.status }
                 <small class="d-block text-body-secondary">
@@ -16,3 +17,4 @@
         </label>
     </div>
 {/each}
+</div>
