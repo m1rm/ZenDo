@@ -6,7 +6,7 @@
 <div class="row m-2 gap-2">
     {#each data.todos as todo}
         <div class="col-12 col-sm-6 border d-flex flex-column">
-            <span class="mt-2">
+            <span class="mt-2 mb-2">
             { todo.text }
             </span>
 
