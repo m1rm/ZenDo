@@ -3,21 +3,21 @@
         {
             "id": 1,
             "text": "Style mock content",
-            "status": "open",
+            "status": "done",
             "createdAt": "",
             "updatedAt": ""
         },
         {
             "id": 2,
             "text": "Style nav",
-            "status": "open",
+            "status": "done",
             "createdAt": "",
             "updatedAt": ""
         },
         {
             "id": 3,
             "text": "Add header and footer",
-            "status": "open",
+            "status": "done",
             "createdAt": "",
             "updatedAt": ""
         },
@@ -31,6 +31,27 @@
         {
             "id": 5,
             "text": "Show it to Julian",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        },
+        {
+            "id": 6,
+            "text": "dockerize",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        },
+        {
+            "id": 7,
+            "text": "add just & docker compose setup",
+            "status": "open",
+            "createdAt": "",
+            "updatedAt": ""
+        },
+        {
+            "id": 8,
+            "text": "replace mock data with real API",
             "status": "open",
             "createdAt": "",
             "updatedAt": ""
