@@ -21,6 +21,5 @@
                 </div>
             </div>
         </div>
-
     {/each}
 </div>
