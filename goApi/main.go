@@ -34,6 +34,7 @@ func getTodos(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(response)
 }
@@ -69,6 +70,7 @@ func getTodo(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(response)
 }

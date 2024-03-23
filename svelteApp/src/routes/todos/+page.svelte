@@ -1,10 +1,21 @@
 <script>
-    export let data
+    import { onMount } from "svelte"
+    import { todoData } from "../../stores/todos"
+
+    onMount(async () => {
+        fetch("http://localhost:8090/todos")
+        .then(response => response.json())
+        .then(data => {todoData.set(data)})
+        .catch(error => {
+            console.log(error)
+            return []
+        })
+    })
 </script>
 
 <h1>ToDos</h1>
 <div class="row m-2 gap-2">
-    {#each data.todos as todo}
+    {#each $todoData as todo}
         <div class="col-12 col-sm-6 border d-flex flex-column">
             <span class="mt-2 mb-2">
             { todo.text }
