@@ -23,21 +23,35 @@ func queryTodos() ([]Todo, error) {
 
     rows, err := db.Query("SELECT * FROM todo")
     if err != nil {
-        return nil, fmt.Errorf("todos: %v", err)
+        return nil, fmt.Errorf("queryTodos: %v", err)
     }
     defer rows.Close()
 
     for rows.Next() {
         var todo Todo
         if err := rows.Scan(&todo.Id, &todo.Description, &todo.Status); err != nil {
-            return nil, fmt.Errorf("todos: %v", err)
+            return nil, fmt.Errorf("queryTodos: %v", err)
         }
         todos = append(todos, todo)
     }
     if err := rows.Err(); err != nil {
-        return nil, fmt.Errorf("todos: %v", err)
+        return nil, fmt.Errorf("queryTodos: %v", err)
     }
     return todos, nil
+}
+
+
+func queryTodo(id int) (Todo, error) {
+    var todo Todo
+
+    row := db.QueryRow("SELECT * FROM todo WHERE id = ?", id)
+    if err := row.Scan(&todo.Id, &todo.Description, &todo.Status); err != nil {
+        if err == sql.ErrNoRows {
+            return todo, fmt.Errorf("queryTodo %d: no such todo", id)
+        }
+        return todo, fmt.Errorf("queryTodo %d: %v", id, err)
+    }
+    return todo, nil
 }
 
 func getTodos(w http.ResponseWriter, req *http.Request) {
@@ -68,23 +82,13 @@ func getTodo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// bc. array index starts at 0
-	correctedId := id - 1
+    todo, err := queryTodo(id)
+    if err != nil {
+        http.Error(w, fmt.Sprintf("error querying the database, %v", err), http.StatusInternalServerError)
+        return
+    }
 
-	todos := []Todo{
-		{1, "Style mock content", "done"},
-        		{2, "Style nav", "done"},
-        		{3, "Add header and footer", "done"},
-        		{4, "Add CTAs without function", "done"},
-        		{5, "Add Go Api with mock responses", "done"},
-        		{6, "dockerize dev", "done"},
-        		{7, "add just & docker compose setup", "done"},
-        		{8, "add DB", "done"},
-        		{9, "replace mock API responses data with real data", "open"},
-        		{10, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea", "open"},
-	}
-
-	response, err := json.Marshal(todos[correctedId])
+	response, err := json.Marshal(todo)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
 		return
