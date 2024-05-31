@@ -13,9 +13,9 @@ import (
 var db *sql.DB
 
 type Todo struct {
-	Id          int32  `json:"id"`
-	Description string `json:"text"`
-	Status      string `json:"status"`
+	Id          int     `json:"id"`
+	Description string  `json:"text"`
+	Status      int     `json:"status"`
 }
 
 func queryTodos() ([]Todo, error) {
