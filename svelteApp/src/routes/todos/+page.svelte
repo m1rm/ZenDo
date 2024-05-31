@@ -23,8 +23,8 @@
 
             <div class="d-flex justify-content-between align-items-end gap-2 mb-2">
                 <label>
-                    <input class="form-check-input flex-shrink-0" type="checkbox" checked="{todo.status === 'done'}">
-                    { todo.status }
+                    <input class="form-check-input flex-shrink-0" type="checkbox" checked="{todo.status === 1}">
+                    { todo.status === 1 ? 'done' : 'open' }
                 </label>
                 <div>
                     <button class="btn btn-sm btn-outline-secondary" type="button">Edit</button>
