@@ -10,25 +10,43 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+var db *sql.DB
+
 type Todo struct {
-	Id     int32  `json:"id"`
-	Text   string `json:"text"`
-	Status string `json:"status"`
+	Id          int32  `json:"id"`
+	Description string `json:"text"`
+	Status      string `json:"status"`
+}
+
+func queryTodos() ([]Todo, error) {
+    var todos []Todo
+
+    rows, err := db.Query("SELECT * FROM todo")
+    if err != nil {
+        return nil, fmt.Errorf("todos: %v", err)
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var todo Todo
+        if err := rows.Scan(&todo.Id, &todo.Description, &todo.Status); err != nil {
+            return nil, fmt.Errorf("todos: %v", err)
+        }
+        todos = append(todos, todo)
+    }
+    if err := rows.Err(); err != nil {
+        return nil, fmt.Errorf("todos: %v", err)
+    }
+    return todos, nil
 }
 
 func getTodos(w http.ResponseWriter, req *http.Request) {
-	todos := []Todo{
-		{1, "Style mock content", "done"},
-		{2, "Style nav", "done"},
-		{3, "Add header and footer", "done"},
-		{4, "Add CTAs without function", "done"},
-		{5, "Add Go Api with mock responses", "done"},
-		{6, "dockerize dev", "done"},
-		{7, "add just & docker compose setup", "done"},
-		{8, "add DB", "done"},
-		{9, "replace mock API responses data with real data", "open"},
-		{10, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea", "open"},
-	}
+
+    todos, err := queryTodos()
+    if err != nil {
+        http.Error(w, fmt.Sprintf("error querying the database, %v", err), http.StatusInternalServerError)
+        return
+    }
 
 	response, err := json.Marshal(todos)
 	if err != nil {
@@ -80,8 +98,6 @@ func getTodo(w http.ResponseWriter, req *http.Request) {
 
 func main() {
     // --- START Connect to DB ---
-    var db *sql.DB
-
     // Capture connection properties.
     cfg := mysql.Config{
         User:   "root",
@@ -101,7 +117,7 @@ func main() {
     if pingErr != nil {
         log.Fatal(pingErr)
     }
-    fmt.Println("Connected!")
+    fmt.Println("DB Connected!")
     // --- END Connect to DB ---
 
 	http.HandleFunc("GET /todos", getTodos)
