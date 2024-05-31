@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+    "database/sql"
+    "log"
+	"github.com/go-sql-driver/mysql"
 )
 
 type Todo struct {
@@ -76,6 +79,31 @@ func getTodo(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+    // --- START Connect to DB ---
+    var db *sql.DB
+
+    // Capture connection properties.
+    cfg := mysql.Config{
+        User:   "root",
+        Passwd: "ChangeMe",
+        Net:    "tcp",
+        Addr:   "db:3306",
+        DBName: "todoApp",
+    }
+    // Get a database handle.
+    var err error
+    db, err = sql.Open("mysql", cfg.FormatDSN())
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    pingErr := db.Ping()
+    if pingErr != nil {
+        log.Fatal(pingErr)
+    }
+    fmt.Println("Connected!")
+    // --- END Connect to DB ---
+
 	http.HandleFunc("GET /todos", getTodos)
 	http.HandleFunc("GET /todos/{id}", getTodo)
 

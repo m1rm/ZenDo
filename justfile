@@ -34,5 +34,5 @@ install:
 pnpm *args:
     {{SVELTEKIT-RUN}} pnpm {{args}}
 
-	
-
+compose *args:
+	{{COMPOSE}} {{args}}
