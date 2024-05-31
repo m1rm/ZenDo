@@ -1,37 +1,10 @@
 # ZenDo
 Repo holding ToDo app practice projects
 
-# API response structure for mock
-## /GET ToDo
-
-```json
-{
-  "id": 1,
-  "text": "abc",
-  "status": "open",
-  "createdAt": "",
-  "updatedAt": ""
-}
-```
-
-## /GET ToDos
-```json
-{
-  "todos": [
-    {
-      "id": 1,
-      "text": "abc",
-      "status": "open",
-      "createdAt": "",
-      "updatedAt": ""
-    }
-  ]
-}
-```
 
 # ToDo
-- provide API service & replace API mocks in FE
-- dockerize
-- add just
-- add docker compose for local development
-- install and bundle bootstrap instead of link include
+- refactor directory structure
+- add missing API functionalities & API doc
+- make CTAs in FE functional
+- add prod setup
+- find and use migration tooling

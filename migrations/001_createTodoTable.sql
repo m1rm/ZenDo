@@ -12,7 +12,7 @@ VALUES
     ('Style FE', '1' ),
     ('Add CTAs w/o functionality', '1' ),
     ('dockerize dev', '1' ),
-    ('replace mock API responses data with real data', '0' ),
+    ('replace mock API responses data with real data', '1' ),
     ('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea', 0 ),
     ('improve project (goApi) structure', '0' ),
     ('implement missing API functionality', '0' ),
