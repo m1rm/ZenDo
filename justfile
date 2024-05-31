@@ -5,7 +5,7 @@ COMPOSE := 'docker compose -f docker/compose.yml'
 COMPOSE-RUN := COMPOSE + ' run --rm'
 GO-RUN := COMPOSE-RUN + ' go'
 SVELTEKIT-RUN := COMPOSE-RUN + ' sveltekit'
-DB-RUN := COMPOSE-RUN + ' --no-deps db'
+DB-RUN := COMPOSE-RUN + ' -T --no-deps db'
 
 default:
 	just --list
@@ -31,8 +31,14 @@ rebuild: clean
 install:
 	{{SVELTEKIT-RUN}} pnpm install
 
+init-db:
+    cat migrations/*.sql | {{DB-RUN}} mysql -uroot -pChangeMe -hdb todoApp
+
 pnpm *args:
     {{SVELTEKIT-RUN}} pnpm {{args}}
 
 compose *args:
 	{{COMPOSE}} {{args}}
+
+mysql *args:
+    {{DB-RUN}} mysql {{args}}
