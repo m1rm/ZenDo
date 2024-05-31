@@ -5,6 +5,7 @@
 
 # project related
 node_modules
+.pnpm-store
 /build
 /.svelte-kit
 /package
