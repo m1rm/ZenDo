@@ -25,6 +25,8 @@ services:
       - ../goApi:/goApi
     tmpfs:
       - /tmp:exec
+    depends_on:
+      - db
 
   sveltekit:
     build: node
