@@ -1,12 +1,12 @@
 DROP TABLE IF EXISTS todo;
-CREATE TABLE todo (
+CREATE TABLE todos (
                       id          INT AUTO_INCREMENT NOT NULL,
                       description VARCHAR(255),
                       status      TINYINT NOT NULL DEFAULT 0,
                       PRIMARY KEY (`id`)
 );
 
-INSERT INTO todo
+INSERT INTO todos
 (description, status)
 VALUES
     ('Style FE', '1' ),
