@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS todo;
+DROP TABLE IF EXISTS todos;
 CREATE TABLE todos (
                       id          INT AUTO_INCREMENT NOT NULL,
                       description VARCHAR(255),
