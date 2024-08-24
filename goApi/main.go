@@ -68,14 +68,14 @@ func insertTodo(w http.ResponseWriter, todo Todo) (int64, error) {
 	return id, nil
 }
 
-func deleteTodo(w http.ResponseWriter, todo Todo) (int64, error) {
-	query := "DELETE FROM `todos` WHERE (`id`) VALUES (?);"
-	insertResult, err := db.ExecContext(context.Background(), query, &todo.id)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error deletomg todo, %v", err), http.StatusInternalServerError)
-	}
-	return id, nil
-}
+// func deleteTodo(w http.ResponseWriter, todo Todo) (int64, error) {
+// 	query := "DELETE FROM `todos` WHERE (`id`) VALUES (?);"
+// 	insertResult, err := db.ExecContext(context.Background(), query, &todo.id)
+// 	if err != nil {
+// 		http.Error(w, fmt.Sprintf("error deletomg todo, %v", err), http.StatusInternalServerError)
+// 	}
+// 	return id, nil
+// }
 
 func getTodos(w http.ResponseWriter, req *http.Request) {
 	todos, err := queryTodos()
@@ -146,28 +146,28 @@ func addTodo(w http.ResponseWriter, req *http.Request) {
 	w.Write(response)
 }
 
-func deleteTodo(w http.ResponseWriter, req *http.Request) {
-	var t Todo
-	err := json.NewDecoder(req.Body).Decode(&t)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error parsing transmitted data, %v", err), http.StatusInternalServerError)
-		return
-	}
-	id, err := deleteTodo(w, t)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error deleting todo in DB, %v", err), http.StatusInternalServerError)
-		return
-	}
-	response, err := json.Marshal(id)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusOK)
-	w.Write(response)
-}
+// func deleteTodo(w http.ResponseWriter, req *http.Request) {
+// 	var t Todo
+// 	err := json.NewDecoder(req.Body).Decode(&t)
+// 	if err != nil {
+// 		http.Error(w, fmt.Sprintf("error parsing transmitted data, %v", err), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	id, err := deleteTodo(w, t)
+// 	if err != nil {
+// 		http.Error(w, fmt.Sprintf("error deleting todo in DB, %v", err), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	response, err := json.Marshal(id)
+// 	if err != nil {
+// 		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.Header().Set("Access-Control-Allow-Origin", "*")
+// 	w.WriteHeader(http.StatusOK)
+// 	w.Write(response)
+// }
 
 func main() {
 	// --- START Connect to DB ---
