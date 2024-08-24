@@ -1,6 +1,7 @@
 <script>
-    import { onMount } from "svelte"
-    import { todoData } from "../../stores/todos"
+    import { onMount } from 'svelte'
+    import { goto } from '$app/navigation'
+    import { todoData } from '../../stores/todos'
 
     onMount(async () => {
         fetch("http://localhost:8090/todos")
@@ -11,9 +12,19 @@
             return []
         })
     })
+
+    /**
+     * @param {string} route
+     */
+    function routeToPage(route) {
+        goto(route)
+    }
 </script>
 
-<h1>ToDos</h1>
+<div class="row m-2">
+    <span class="h1 col-12">ToDos</span>
+    <button class=" col-6 btn btn-sm btn-primary" type="button" on:click={routeToPage('edit')}>Add</button>
+</div>
 <div class="row m-2 gap-2">
     {#each $todoData as todo}
         <div class="col-12 col-sm-6 border d-flex flex-column">
