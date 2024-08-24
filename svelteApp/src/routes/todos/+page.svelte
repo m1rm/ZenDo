@@ -12,18 +12,11 @@
             return []
         })
     })
-
-    /**
-     * @param {string} route
-     */
-    function routeToPage(route) {
-        goto(route)
-    }
 </script>
 
 <div class="row m-2">
     <span class="h1 col-12">ToDos</span>
-    <button class=" col-6 btn btn-sm btn-primary" type="button" on:click={routeToPage('edit')}>Add</button>
+    <button class="col-1 btn btn-sm btn-primary" type="button">Add</button>
 </div>
 <div class="row m-2 gap-2">
     {#each $todoData as todo}
