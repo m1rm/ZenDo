@@ -47,6 +47,23 @@
         }
     }
 
+    async function deleteTodo(id) {
+    try {
+      const response = await fetch(`http://localhost:8090/todos/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete the todo');
+      }
+
+      // Handle successful deletion (e.g., update the UI)
+      console.log('Todo deleted successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
 </script>
 
 <style>
@@ -91,7 +108,12 @@
                 </label>
                 <div>
                     <button class="btn btn-sm btn-outline-secondary" type="button">Edit</button>
-                    <button class="btn btn-sm btn-primary btn-danger" type="button">Delete</button>
+                    <button 
+                        class="btn btn-sm btn-primary btn-danger"
+                        type="button"
+                        on:click={() => deleteTodo(todo.id)}>
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>
