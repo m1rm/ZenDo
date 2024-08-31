@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -91,6 +90,7 @@ func deleteTodo(w http.ResponseWriter, id int64) (int64, error) {
 }
 
 func handleGetTodos(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
 	todos, err := getTodos()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error querying the database, %v", err), http.StatusInternalServerError)
@@ -110,6 +110,7 @@ func handleGetTodos(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleGetTodo(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
 	queryParam := req.PathValue("id")
 	id, err := strconv.Atoi(queryParam)
 	if err != nil {
@@ -137,6 +138,7 @@ func handleGetTodo(w http.ResponseWriter, req *http.Request) {
 
 // @see https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
 func handleAddTodo(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
 	var t Todo
 	err := json.NewDecoder(req.Body).Decode(&t)
 	if err != nil {
