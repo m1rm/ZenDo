@@ -160,6 +160,7 @@ func handleAddTodo(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleDeleteTodo(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
 	var id int64
 	err := json.NewDecoder(req.Body).Decode(&id)
 	if err != nil {
