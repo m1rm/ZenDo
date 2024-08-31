@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-
 	"github.com/go-sql-driver/mysql"
 )
 
