@@ -8,8 +8,8 @@ services:
       start_period: 30s
       timeout: 10s
     environment:
-      MYSQL_USER: goApi
-      MSQL_PASSWORD: "football"
+      MYSQL_USER: "goApi"
+      MSQL_USER_PASSWORD: "football"
       MYSQL_ROOT_PASSWORD: "soccer"
       MYSQL_DATABASE: "zendo"
     ports:

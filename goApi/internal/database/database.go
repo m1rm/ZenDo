@@ -41,7 +41,7 @@ var (
 	password   = "football"
 	username   = "goApi"
 	port       = "3306"
-	host       = "db:3306"
+	host       = "db"
 	dbInstance *service
 )
 
