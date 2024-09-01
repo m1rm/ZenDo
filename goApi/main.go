@@ -26,6 +26,11 @@ func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
+func handleSuccessResponse(w *http.ResponseWriter) {
+	(*w).Header().Set("Content-Type", "application/json")
+	(*w).WriteHeader(http.StatusOK)
+}
+
 func handleOptionsRequest(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 	w.WriteHeader(http.StatusNoContent)
@@ -98,6 +103,8 @@ func deleteTodo(w http.ResponseWriter, id int64) (int64, error) {
 }
 
 func handleGetTodos(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
+
 	todos, err := getTodos()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error querying the database, %v", err), http.StatusInternalServerError)
@@ -110,13 +117,13 @@ func handleGetTodos(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusOK)
+	handleSuccessResponse(&w)
 	w.Write(response)
 }
 
 func handleGetTodo(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
+
 	queryParam := req.PathValue("id")
 	id, err := strconv.Atoi(queryParam)
 	if err != nil {
@@ -136,14 +143,14 @@ func handleGetTodo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusOK)
+	handleSuccessResponse(&w)
 	w.Write(response)
 }
 
 // @see https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
 func handleAddTodo(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
+
 	var t Todo
 	err := json.NewDecoder(req.Body).Decode(&t)
 	if err != nil {
@@ -160,9 +167,8 @@ func handleAddTodo(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusOK)
+
+	handleSuccessResponse(&w)
 	w.Write(response)
 }
 
@@ -184,9 +190,8 @@ func handleDeleteTodo(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusOK)
+
+	handleSuccessResponse(&w)
 	w.Write(response)
 }
 
