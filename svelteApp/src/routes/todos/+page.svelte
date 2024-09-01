@@ -12,6 +12,28 @@
         })
     })
 
+    /**
+     * @param {boolean} success
+     * @param {string} action
+     * @param {Response} response
+     */
+    async function builtConfirmationMessage(success, action, response) {
+        if (!success) {
+            confirmationMessage = `Failed to ${action} todo: ${response.statusText}`
+            showConfirmation = true
+            console.log(await response.json())
+        } else {
+            confirmationMessage = `${action} todo: success.`
+                textInput = ''; // Reset the form input
+                showConfirmation = true;
+
+                // Clear the confirmation message after 3 seconds
+                setTimeout(() => {
+                    showConfirmation = false
+                }, 3000);
+        }
+    }
+
     let textInput = '';
     let confirmationMessage = '';
     let showConfirmation = false;
@@ -21,46 +43,43 @@
     async function handleSubmit(event) {
         event.preventDefault();
 
-        const response = await fetch('/api/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: textInput })
-        })
+        try {
+            const response = await fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: textInput })
+            })
 
-        if (!response.ok) {
-            confirmationMessage = `Failed to add todo: ${response.statusText}`;
-            showConfirmation = true;
-            console.log(await response.json());
-        } else {
-            confirmationMessage = 'Todo added successfully!';
-                textInput = ''; // Reset the form input
-                showConfirmation = true;
-
-                // Clear the confirmation message after 3 seconds
-                setTimeout(() => {
-                    showConfirmation = false;
-                }, 3000);
-            const result = await response.json();
-            console.log(result);
+            builtConfirmationMessage(response.ok, 'add', response)
+            if(!response.ok) {
+                throw new Error('Failed to add the todo')
+            } else {
+                // @todo: handle success -> update UI
+            }
+        } catch (error) {
+            console.error('Error:', error)
         }
     }
 
+    /**
+     * @param {number} id
+     */
     async function deleteTodo(id) {
     try {
-      const response = await fetch(`http://localhost:8090/todos/${id}`, {
-        method: 'DELETE'
-      });
+        const response = await fetch(`http://localhost:8090/todos/${id}`, {
+            method: 'DELETE'
+        })
 
-      if (!response.ok) {
-        throw new Error('Failed to delete the todo');
-      }
-
-      // Handle successful deletion (e.g., update the UI)
-      console.log('Todo deleted successfully');
+        builtConfirmationMessage(response.ok, 'delete', response)
+        if(!response.ok) {
+            throw new Error('Failed to delete the todo')
+        } else {
+            // @todo: handle success -> update UI
+        }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error)
     }
   }
 
