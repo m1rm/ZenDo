@@ -27,7 +27,7 @@
                 textInput = ''; // Reset the form input
                 showConfirmation = true;
 
-                // Clear the confirmation message after 3 seconds
+                // Clear the confirmation message after 2 seconds
                 setTimeout(() => {
                     showConfirmation = false
                 }, 2000);
