@@ -13,7 +13,6 @@ default:
 # start all containers
 start *args:
 	{{COMPOSE}} up -d {{args}}
-	{{DB-RUN}} mysqladmin -uroot -pChangeMe -hdb --wait=10 ping
 	@echo URL: http://localhost:5173
 
 # stop all containers
