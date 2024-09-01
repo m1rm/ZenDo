@@ -8,8 +8,10 @@ services:
       start_period: 30s
       timeout: 10s
     environment:
-      MYSQL_ROOT_PASSWORD: "ChangeMe"
-      MYSQL_DATABASE: "todoApp"
+      MYSQL_USER: goApi
+      MSQL_PASSWORD: "football"
+      MYSQL_ROOT_PASSWORD: "soccer"
+      MYSQL_DATABASE: "zendo"
     ports:
       - "3306:3306"
 
@@ -20,7 +22,7 @@ services:
     working_dir: /goApi
     environment:
       - HOME=/tmp
-    command: go run main.go
+    command: go run ./cmd/api
     user: "${UID}:${GID}"
     userns_mode: host
     cap_drop:
