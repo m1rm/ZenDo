@@ -1,6 +1,12 @@
 services:
   db:
     image: mysql:8.3
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -uroot -pChangeMe -hdb ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     environment:
       MYSQL_ROOT_PASSWORD: "ChangeMe"
       MYSQL_DATABASE: "todoApp"
@@ -26,7 +32,9 @@ services:
     tmpfs:
       - /tmp:exec
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+        restart: true
 
   sveltekit:
     build: node
