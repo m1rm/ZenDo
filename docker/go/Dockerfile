@@ -1,1 +1,1 @@
-FROM golang:alpine3.20 as base
+FROM golang:1.23 as base
