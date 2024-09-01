@@ -30,7 +30,7 @@
                 // Clear the confirmation message after 3 seconds
                 setTimeout(() => {
                     showConfirmation = false
-                }, 3000);
+                }, 2000);
         }
     }
 
@@ -85,20 +85,21 @@
 
 </script>
 
-<style>
-    .fade {
-        transition: opacity 0.5s ease-in-out;
-    }
-    .fade.show {
-        opacity: 1;
-    }
-    .fade:not(.show) {
-        opacity: 0;
-    }
-</style>
-
-
 <span class="h1 col-12">ToDos</span>
+
+{#if showConfirmation}
+<div style="z-index: 11" class="position-fixed top-50 start-50 translate-middle">
+    <div class="toast show bg-info" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Info</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {confirmationMessage}
+        </div>
+    </div>
+</div>
+{/if}
 
 <div class="row m-2 gap-2">
     <form on:submit={handleSubmit}>
@@ -108,11 +109,6 @@
         </div>
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
-    {#if showConfirmation}
-        <div class="alert alert-success fade show" role="alert">
-            {confirmationMessage}
-        </div>
-    {/if}
 
     {#each $todoData as todo}
         <div class="col-12 col-sm-6 border d-flex flex-column">
