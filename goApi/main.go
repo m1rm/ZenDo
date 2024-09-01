@@ -174,25 +174,20 @@ func handleAddTodo(w http.ResponseWriter, req *http.Request) {
 
 func handleDeleteTodo(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
-	var id int64
-	err := json.NewDecoder(req.Body).Decode(&id)
+
+	queryParam := req.PathValue("id")
+	id, err := strconv.Atoi(queryParam)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("error parsing transmitted data, %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("error parsing id query param, %v", err), http.StatusInternalServerError)
 		return
 	}
-	id, err = deleteTodo(w, id)
+	_, err = deleteTodo(w, int64(id))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error deleting todo in DB, %v", err), http.StatusInternalServerError)
 		return
 	}
-	response, err := json.Marshal(id)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
-		return
-	}
 
-	handleSuccessResponse(&w)
-	w.Write(response)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func main() {
