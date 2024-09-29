@@ -22,7 +22,7 @@ services:
     working_dir: /goapi
     environment:
       - HOME=/tmp
-    command: sh -c "go run ./cmd/api & go run ./test_db_connection.go"
+    command: go run ./cmd/api
     user: "${UID}:${GID}"
     userns_mode: host
     cap_drop:
