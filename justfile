@@ -39,7 +39,7 @@ install:
 
 # seed DB with testdata
 init-db:
-    cat migrations/*.sql | {{DB-RUN}} mysql -uroot -pChangeMe -hdb todoApp
+    cat migrations/*.sql | {{DB-RUN}} mysql -uroot -psoccer -hdb zendo
 
 # exec into a running container
 exec-ti *args:
