@@ -100,19 +100,19 @@ func (s *Server) handleGetTodo(w http.ResponseWriter, req *http.Request) {
 func (s *Server) handleAddTodo(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 
-	var t models.Todo
+	var todo models.Todo
 
-	err := json.NewDecoder(req.Body).Decode(&t)
-	if err != nil {
+	if err := json.NewDecoder(req.Body).Decode(&todo); err != nil {
 		http.Error(w, fmt.Sprintf("error parsing transmitted data, %v", err), http.StatusInternalServerError)
 		return
 	}
-	todo, err := s.db.InsertTodo(t)
-	if err != nil {
+
+	if err := s.db.InsertTodo(&todo); err != nil {
 		http.Error(w, fmt.Sprintf("error saving todo in DB, %v", err), http.StatusInternalServerError)
 		return
 	}
-	response, err := json.Marshal(todo)
+
+	response, err := json.Marshal(&todo)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
 		return
