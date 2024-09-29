@@ -39,7 +39,7 @@ type service struct {
 var (
 	dbname     = "zendo"
 	password   = "football"
-	username   = "goApi"
+	username   = "goapi"
 	port       = "3306"
 	host       = "db"
 	dbInstance *service
