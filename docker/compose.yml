@@ -9,7 +9,7 @@ services:
       timeout: 10s
     environment:
       MYSQL_USER: "goapi"
-      MSQL_PASSWORD: "football"
+      MYSQL_PASSWORD: "football"
       MYSQL_ROOT_PASSWORD: "soccer"
       MYSQL_DATABASE: "zendo"
     ports:
