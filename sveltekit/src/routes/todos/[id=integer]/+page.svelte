@@ -16,7 +16,7 @@
 </script>
 
 <div class="row m-2">
-    <h1>#{ $todo.id } { $todo.text }</h1>
+    <h1>#{ $todo.id } { $todo.description }</h1>
     <div class="d-flex justify-content-between align-items-end gap-2 mb-2">
         <label>
             <input class="form-check-input flex-shrink-0" type="checkbox" checked="{$todo.status === 1}">

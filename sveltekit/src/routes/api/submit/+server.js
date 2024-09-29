@@ -2,10 +2,10 @@ import { json } from '@sveltejs/kit';
 
 export async function POST({ request }) {
 
-  let todo = { "status": 0, "text" : "placeholder"}
+  let todo = { "status": 0, "description" : "placeholder"}
 
   const data = await request.json();
-  todo.text = data.text;
+  todo.description = data.description;
 
   const response = await fetch('http://go:8090/todos', {
       method: 'POST',

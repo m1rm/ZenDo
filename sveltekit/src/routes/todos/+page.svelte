@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte'
     import { todoData } from '../../stores/todos'
+    import { todo } from '../../stores/todo';
 
     onMount(async () => {
         fetch("http://localhost:8090/todos")
@@ -49,14 +50,12 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ text: textInput })
+                body: JSON.stringify({ description: textInput })
             })
 
             builtConfirmationMessage(response.ok, 'add', response)
             if(!response.ok) {
                 throw new Error('Failed to add the todo')
-            } else {
-                // @todo: handle success -> update UI
             }
         } catch (error) {
             console.error('Error:', error)
@@ -113,7 +112,7 @@
     {#each $todoData as todo}
         <div class="col-12 col-sm-6 border d-flex flex-column">
             <span class="mt-2 mb-2">
-            { todo.text }
+            { todo.description }
             </span>
 
             <div class="d-flex justify-content-between align-items-end gap-2 mb-2">

@@ -29,7 +29,7 @@ type Service interface {
 
 	DeleteTodo(id int64) (int64, error)
 
-	InsertTodo(todo models.Todo) (int64, error)
+	InsertTodo(todo models.Todo) (models.Todo, error)
 }
 
 type service struct {
@@ -162,17 +162,18 @@ func (s *service) GetTodo(id int64) (models.Todo, error) {
 	return todo, nil
 }
 
-func (s *service) InsertTodo(todo models.Todo) (int64, error) {
+func (s *service) InsertTodo(todo models.Todo) (models.Todo, error) {
 	query := "INSERT INTO `todos` (`description`, `status`) VALUES (?, ?);"
 	insertResult, err := s.db.ExecContext(context.Background(), query, &todo.Description, &todo.Status)
 	if err != nil {
-		return 0, err
+		return todo, err
 	}
 	id, err := insertResult.LastInsertId()
+	*todo.Id = id
 	if err != nil {
-		return id, err
+		return todo, err
 	}
-	return id, nil
+	return todo, nil
 }
 
 func (s *service) DeleteTodo(id int64) (int64, error) {
