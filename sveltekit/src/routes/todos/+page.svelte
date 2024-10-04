@@ -1,7 +1,6 @@
 <script>
     import { onMount } from 'svelte'
     import { todoData } from '../../stores/todos'
-    import { todo } from '../../stores/todo';
 
     onMount(async () => {
         try {
@@ -13,7 +12,7 @@
             todoData.set(data);
         } catch (error) {
             console.error('Fetch error:', error);
-            todoData.set([]); // Set to an empty array on error
+            todoData.set([]);
         }
     })
 

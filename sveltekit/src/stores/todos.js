@@ -1,7 +1,18 @@
-import { writable } from 'svelte/store';
+import { writable } from 'svelte/store'
 
-/** Store for your data. 
-This assumes the data you're pulling back will be an array.
-If it's going to be an object, default this to an empty object.
-**/
-export const todoData = writable([]);
+/**
+ * @typedef {Object} Todo
+ * @property {number} id - The unique identifier for the todo item.
+ * @property {string} description - The description of the todo item.
+ * @property {number} status - The status of the todo. 0 = open, 1 = done
+ */
+
+/** @type {import('svelte/store').Writable<Todo[]>} */
+export const todoData = writable([])
+
+/** @type {import('svelte/store').Writable<Todo>} */
+export const selectedTodo = writable({
+    id: 0,
+    description: '',
+    status: 0
+  });
