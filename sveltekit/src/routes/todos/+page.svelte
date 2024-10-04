@@ -4,13 +4,17 @@
     import { todo } from '../../stores/todo';
 
     onMount(async () => {
-        fetch("http://localhost:8090/todos")
-        .then(response => response.json())
-        .then(data => {todoData.set(data)})
-        .catch(error => {
-            console.log(error)
-            return []
-        })
+        try {
+            const response = await fetch("http://localhost:8090/todos");
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            todoData.set(data);
+        } catch (error) {
+            console.error('Fetch error:', error);
+            todoData.set([]); // Set to an empty array on error
+        }
     })
 
     /**
@@ -38,6 +42,7 @@
     let textInput = '';
     let confirmationMessage = '';
     let showConfirmation = false;
+
     /**
      * @param {Event} event
      */
@@ -51,14 +56,16 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ description: textInput })
-            })
+            });
 
-            builtConfirmationMessage(response.ok, 'add', response)
-            if(!response.ok) {
-                throw new Error('Failed to add the todo')
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
+
+            const data = await response.json();
+            todoData.update(currentData => [...currentData, data]);
         } catch (error) {
-            console.error('Error:', error)
+            console.error('Error:', error);
         }
     }
 
@@ -66,21 +73,21 @@
      * @param {number} id
      */
     async function deleteTodo(id) {
-    try {
-        const response = await fetch(`http://localhost:8090/todos/${id}`, {
-            method: 'DELETE'
-        })
+        try {
+            const response = await fetch(`http://localhost:8090/todos/${id}`, {
+                method: 'DELETE'
+            });
 
-        builtConfirmationMessage(response.ok, 'delete', response)
-        if(!response.ok) {
-            throw new Error('Failed to delete the todo')
-        } else {
-            // @todo: handle success -> update UI
+            await builtConfirmationMessage(response.ok, 'delete', response);
+            if (!response.ok) {
+                throw new Error('Failed to delete the todo');
+            } else {
+                todoData.update(currentData => currentData.filter(todo => todo.id !== id));
+            }
+        } catch (error) {
+            console.error('Error:', error);
         }
-    } catch (error) {
-      console.error('Error:', error)
     }
-  }
 
 </script>
 
