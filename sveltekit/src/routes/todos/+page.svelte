@@ -32,10 +32,10 @@
                 textInput = ''; // Reset the form input
                 showConfirmation = true;
 
-                // Clear the confirmation message after 2 seconds
+                // Clear the confirmation message after 1 second
                 setTimeout(() => {
                     showConfirmation = false
-                }, 2000);
+                }, 1000);
         }
     }
 
@@ -102,6 +102,7 @@
         </div>
         <div class="toast-body">
             {confirmationMessage}
+            <div id="confirmationCountdownBar"></div>
         </div>
     </div>
 </div>
@@ -140,3 +141,25 @@
         </div>
     {/each}
 </div>
+
+<style>
+    #confirmationCountdownBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px; /* Height of the progress bar */
+    background-color: #4caf50; /* Color of the progress bar */
+    animation: decrease 1s linear forwards;
+}
+
+@keyframes decrease {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0;
+    }
+}
+
+</style>
