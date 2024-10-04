@@ -57,13 +57,14 @@
                 },
                 body: JSON.stringify({ description: textInput })
             });
-
+            
+            await builtConfirmationMessage(response.ok, 'submit', response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
-            }
-
+            } else {
             const data = await response.json();
-            todoData.update(currentData => [...currentData, data]);
+            todoData.update(currentData => [...currentData, data]);  
+            }
         } catch (error) {
             console.error('Error:', error);
         }
