@@ -7,6 +7,10 @@
     let textInput = "";
     let errorMessage = "";
     let showConfirmation = false;
+    /**
+    * @type {Todo | null}
+    */
+    let editingTodo = null;
 
     onMount(async () => {
         try {
@@ -136,6 +140,39 @@
             console.error("Error:", error);
         }
     }
+    
+    /**
+    * 
+    * @param {Event} event
+    */
+    async function handleEditSubmit(event) {
+            event.preventDefault();
+            loading = true;
+    
+            try {
+                const response = await fetch(`http://localhost:8090/todos/${editingTodo.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(editingTodo)
+                });
+    
+                if (!response.ok) {
+                    await builtErrorMessage("edit", "API response was not ok.");
+                    throw new Error("API response was not ok when editing todo.");
+                } else {
+                    const data = await response.json();
+                    todoData.update((todos) =>
+                        todos.map((t) => (t.id === editingTodo.id ? data : t))
+                    );
+                    editingTodo = null;
+                }
+            } catch (error) {
+                await builtErrorMessage("edit", "An unexpected error occured.");
+                console.error("Error:", error);
+            } finally {
+                loading = false;
+            }
+        }
 </script>
 
 {#if showConfirmation}
@@ -203,35 +240,54 @@
             {#each $todoData as todo}
                 <div class="card mb-3">
                     <div class="card-body d-flex align-items-center">
-                        <input
-                            class="form-check-input me-2"
-                            type="checkbox"
-                            checked={todo.status === 1}
-                            on:change={() => toggleTodoStatus(todo)}
-                        />
-                        <span
-                            class="card-text {todo.status === 1
-                                ? 'text-decoration-line-through'
-                                : ''}"
-                        >
-                            {todo.description}
-                        </span>
-                        <div class="ms-auto">
-                            <button
-                                class="btn btn-sm btn-outline-secondary"
-                                type="button"
-                                disabled={todo.status === 1}
+                        {#if editingTodo && editingTodo.id === todo.id}
+                            <form class="d-flex w-100" on:submit|preventDefault={handleEditSubmit}>
+                                <input
+                                    type="text"
+                                    class="form-control me-2"
+                                    bind:value={editingTodo.description}
+                                    required
+                                />
+                                <button class="btn btn-primary me-2" type="submit">Save</button>
+                                <button
+                                    class="btn btn-secondary"
+                                    on:click={() => (editingTodo = null)}
+                                >
+                                    Cancel
+                                </button>
+                            </form>
+                        {:else}
+                            <input
+                                class="form-check-input me-2"
+                                type="checkbox"
+                                checked={todo.status === 1}
+                                on:change={() => toggleTodoStatus(todo)}
+                            />
+                            <span
+                                class="card-text {todo.status === 1
+                                    ? 'text-decoration-line-through'
+                                    : ''}"
                             >
-                                Edit
-                            </button>
-                            <button
-                                class="btn btn-sm btn-danger ms-2"
-                                type="button"
-                                on:click={() => deleteTodo(todo.id)}
-                            >
-                                Delete
-                            </button>
-                        </div>
+                                {todo.description}
+                            </span>
+                            <div class="ms-auto">
+                                <button
+                                    class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    disabled={todo.status === 1}
+                                    on:click={() => (editingTodo = { ...todo })}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    class="btn btn-sm btn-danger ms-2"
+                                    type="button"
+                                    on:click={() => deleteTodo(todo.id)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        {/if}
                     </div>
                 </div>
             {/each}
