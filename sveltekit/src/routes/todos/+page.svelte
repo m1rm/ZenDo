@@ -3,6 +3,10 @@
     import { todoData } from "../../stores/todos";
 
     let loading = true;
+    let textInput = "";
+    let errorMessage = "";
+    let showConfirmation = false;
+    let attemptedSubmit = false;
 
     onMount(async () => {
         try {
@@ -27,21 +31,22 @@
     async function builtErrorMessage(action, cause) {
         errorMessage = `Failed to ${action} todo: ${cause}`;
         showConfirmation = true;
-        // Clear the confirmation message after 1 second
         setTimeout(() => {
             showConfirmation = false;
         }, 3000);
     }
-
-    let textInput = "";
-    let errorMessage = "";
-    let showConfirmation = false;
 
     /**
      * @param {Event} event
      */
     async function handleSubmit(event) {
         event.preventDefault();
+        attemptedSubmit = true;
+
+        if (!textInput.trim()) {
+            return;
+        }
+
         loading = true;
 
         try {
@@ -61,6 +66,8 @@
             } else {
                 const data = await response.json();
                 todoData.update((currentData) => [...currentData, data]);
+                textInput = ""; // Clear the input after successful submission
+                attemptedSubmit = false; // Reset the flag after successful submission
             }
         } catch (error) {
             await builtErrorMessage("submit", "An unexpected error occured.");
@@ -68,6 +75,20 @@
         } finally {
             loading = false;
         }
+    }
+
+    /**
+     * @param {Event} event
+     */
+    function handleInvalid(event) {
+        event.target.setCustomValidity("Please enter a description.");
+    }
+
+    /**
+     * @param {Event} event
+     */
+    function handleInput(event) {
+        event.target.setCustomValidity(""); // Clear the custom error message
     }
 
     /**
@@ -136,16 +157,22 @@
             </div>
         </div>
     {/if}
-    <form on:submit={handleSubmit}>
+    <form on:submit={handleSubmit} novalidate>
         <div class="form-group mb-1 col-6">
-            <label for="textInput">Enter Text</label>
+            <label for="textInput">Your next todo</label>
             <input
                 type="text"
-                class="form-control"
+                class="form-control {attemptedSubmit && !textInput.trim() ? 'is-invalid' : ''}"
                 id="textInput"
                 bind:value={textInput}
                 placeholder="Enter text"
+                required
+                on:invalid={handleInvalid}
+                on:input={handleInput}
             />
+            {#if attemptedSubmit && !textInput.trim()}
+                <div class="invalid-feedback">Please enter a description.</div>
+            {/if}
         </div>
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
@@ -216,5 +243,15 @@
         align-items: center;
         justify-content: center;
         z-index: 9999;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 5px 1px rgba(220, 53, 69, 0.75);
+    }
+
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
     }
 </style>
