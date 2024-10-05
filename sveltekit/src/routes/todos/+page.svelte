@@ -8,8 +8,8 @@
     let errorMessage = "";
     let showConfirmation = false;
     /**
-    * @type {Todo | null}
-    */
+     * @type {Todo | null}
+     */
     let editingTodo = null;
 
     onMount(async () => {
@@ -140,39 +140,42 @@
             console.error("Error:", error);
         }
     }
-    
+
     /**
-    * 
-    * @param {Event} event
-    */
+     *
+     * @param {Event} event
+     */
     async function handleEditSubmit(event) {
-            event.preventDefault();
-            loading = true;
-    
-            try {
-                const response = await fetch(`http://localhost:8090/todos/${editingTodo.id}`, {
+        event.preventDefault();
+        loading = true;
+
+        try {
+            const response = await fetch(
+                `http://localhost:8090/todos/${editingTodo.id}`,
+                {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(editingTodo)
-                });
-    
-                if (!response.ok) {
-                    await builtErrorMessage("edit", "API response was not ok.");
-                    throw new Error("API response was not ok when editing todo.");
-                } else {
-                    const data = await response.json();
-                    todoData.update((todos) =>
-                        todos.map((t) => (t.id === editingTodo.id ? data : t))
-                    );
-                    editingTodo = null;
-                }
-            } catch (error) {
-                await builtErrorMessage("edit", "An unexpected error occured.");
-                console.error("Error:", error);
-            } finally {
-                loading = false;
+                    body: JSON.stringify(editingTodo),
+                },
+            );
+
+            if (!response.ok) {
+                await builtErrorMessage("edit", "API response was not ok.");
+                throw new Error("API response was not ok when editing todo.");
+            } else {
+                const data = await response.json();
+                todoData.update((todos) =>
+                    todos.map((t) => (t.id === editingTodo.id ? data : t)),
+                );
+                editingTodo = null;
             }
+        } catch (error) {
+            await builtErrorMessage("edit", "An unexpected error occured.");
+            console.error("Error:", error);
+        } finally {
+            loading = false;
         }
+    }
 </script>
 
 {#if showConfirmation}
@@ -241,14 +244,20 @@
                 <div class="card mb-3">
                     <div class="card-body d-flex align-items-center">
                         {#if editingTodo && editingTodo.id === todo.id}
-                            <form class="d-flex w-100" on:submit|preventDefault={handleEditSubmit}>
+                            <form
+                                class="d-flex w-100"
+                                on:submit|preventDefault={handleEditSubmit}
+                            >
                                 <input
                                     type="text"
                                     class="form-control me-2"
                                     bind:value={editingTodo.description}
                                     required
                                 />
-                                <button class="btn btn-primary me-2" type="submit">Save</button>
+                                <button
+                                    class="btn btn-primary me-2"
+                                    type="submit">Save</button
+                                >
                                 <button
                                     class="btn btn-secondary"
                                     on:click={() => (editingTodo = null)}
@@ -271,6 +280,14 @@
                                 {todo.description}
                             </span>
                             <div class="ms-auto">
+                                <a
+                                    class="btn btn-sm btn-outline-secondary me-2"
+                                    href={`/todos/${todo.id}`}
+                                    target="_blank"
+                                    title="Open in new tab"
+                                >
+                                    <i class="bi bi-box-arrow-up-right"></i>
+                                </a>
                                 <button
                                     class="btn btn-sm btn-outline-secondary"
                                     type="button"
