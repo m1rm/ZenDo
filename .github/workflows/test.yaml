@@ -10,19 +10,28 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
       - name: Install just
         uses: extractions/setup-just@v1
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9.1.4
+
       - name: Pull Docker images
         run: just compose pull
+
       - name: Build Docker images
         run: just compose build
+
       - name: Install project dependencies
         run: just install
+
       - name: Eslint Sveltekit App
         run: just eslint-sveltekit
