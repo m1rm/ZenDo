@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { todoData } from "../../stores/todos";
+    /// <reference path="../../types.d.ts" />
 
     let loading = true;
     let textInput = "";
@@ -22,6 +23,7 @@
     });
 
     /**
+     *
      * @param {string} action
      * @param {string} cause
      */
@@ -34,7 +36,6 @@
     }
 
     /**
-     *
      * @param {Event} event
      */
     async function handleSubmit(event) {
@@ -67,6 +68,7 @@
     }
 
     /**
+     *
      * @param {number} id
      */
     async function deleteTodo(id) {
@@ -90,6 +92,48 @@
             console.error("Error:", error);
         } finally {
             loading = false;
+        }
+    }
+
+    /**
+     * @param {Todo} todo
+     */
+    async function toggleTodoStatus(todo) {
+        const updatedStatus = todo.status === 1 ? 0 : 1;
+        try {
+            const response = await fetch(
+                `http://localhost:8090/todos/${todo.id}`,
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ...todo, status: updatedStatus }),
+                },
+            );
+
+            if (!response.ok) {
+                await builtErrorMessage(
+                    "update status",
+                    "API response was not ok.",
+                );
+                throw new Error(
+                    "API response was not ok when updating todo status.",
+                );
+            } else {
+                todoData.update((todos) =>
+                    todos.map((t) => {
+                        if (t.id === todo.id) {
+                            return { ...t, status: updatedStatus };
+                        }
+                        return t;
+                    }),
+                );
+            }
+        } catch (error) {
+            await builtErrorMessage(
+                "update status",
+                "An unexpected error occured.",
+            );
+            console.error("Error:", error);
         }
     }
 </script>
@@ -158,31 +202,35 @@
 
             {#each $todoData as todo}
                 <div class="card mb-3">
-                    <div class="card-body">
-                        <span class="card-text">{todo.description}</span>
-                        <div
-                            class="d-flex justify-content-between align-items-end mt-2"
+                    <div class="card-body d-flex align-items-center">
+                        <input
+                            class="form-check-input me-2"
+                            type="checkbox"
+                            checked={todo.status === 1}
+                            on:change={() => toggleTodoStatus(todo)}
+                        />
+                        <span
+                            class="card-text {todo.status === 1
+                                ? 'text-decoration-line-through'
+                                : ''}"
                         >
-                            <label>
-                                <input
-                                    class="form-check-input flex-shrink-0"
-                                    type="checkbox"
-                                    checked={todo.status === 1}
-                                />
-                                {todo.status === 1 ? "done" : "open"}
-                            </label>
-                            <div>
-                                <button
-                                    class="btn btn-sm btn-outline-secondary"
-                                    type="button">Edit</button
-                                >
-                                <button
-                                    class="btn btn-sm btn-danger"
-                                    type="button"
-                                    on:click={() => deleteTodo(todo.id)}
-                                    >Delete</button
-                                >
-                            </div>
+                            {todo.description}
+                        </span>
+                        <div class="ms-auto">
+                            <button
+                                class="btn btn-sm btn-outline-secondary"
+                                type="button"
+                                disabled={todo.status === 1}
+                            >
+                                Edit
+                            </button>
+                            <button
+                                class="btn btn-sm btn-danger ms-2"
+                                type="button"
+                                on:click={() => deleteTodo(todo.id)}
+                            >
+                                Delete
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -222,5 +270,9 @@
         align-items: center;
         justify-content: center;
         z-index: 9999;
+    }
+
+    .text-decoration-line-through {
+        text-decoration: line-through;
     }
 </style>
