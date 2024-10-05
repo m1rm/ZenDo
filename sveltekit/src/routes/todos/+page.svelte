@@ -2,6 +2,8 @@
     import { onMount } from "svelte";
     import { todoData } from "../../stores/todos";
 
+    let loading = true;
+
     onMount(async () => {
         try {
             const response = await fetch("http://localhost:8090/todos");
@@ -13,6 +15,8 @@
         } catch (error) {
             console.error("Fetch error:", error);
             todoData.set([]);
+        } finally {
+            loading = false;
         }
     });
 
@@ -38,6 +42,7 @@
      */
     async function handleSubmit(event) {
         event.preventDefault();
+        loading = true;
 
         try {
             const response = await fetch("/api/submit", {
@@ -60,6 +65,8 @@
         } catch (error) {
             await builtErrorMessage("submit", "An unexpected error occured.");
             console.error("Error:", error);
+        } finally {
+            loading = false;
         }
     }
 
@@ -67,6 +74,8 @@
      * @param {number} id
      */
     async function deleteTodo(id) {
+        loading = true;
+
         try {
             const response = await fetch(`http://localhost:8090/todos/${id}`, {
                 method: "DELETE",
@@ -83,6 +92,8 @@
         } catch (error) {
             await builtErrorMessage("delete", "An unexpected error occured.");
             console.error("Error:", error);
+        } finally {
+            loading = false;
         }
     }
 </script>
@@ -118,6 +129,13 @@
 {/if}
 
 <div class="row m-2 gap-2">
+    {#if loading}
+        <div class="loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    {/if}
     <form on:submit={handleSubmit}>
         <div class="form-group mb-1 col-6">
             <label for="textInput">Enter Text</label>
@@ -185,5 +203,18 @@
         to {
             width: 0;
         }
+    }
+
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
     }
 </style>
