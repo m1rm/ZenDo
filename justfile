@@ -56,3 +56,7 @@ compose *args:
 # direct access to mysql command inside a db container
 mysql *args:
     {{DB-RUN}} mysql {{args}}
+
+# run eslint on sveltekit app  code
+eslint-sveltekit *args:
+    {{SVELTEKIT-RUN}} pnpm eslint {{args}}
