@@ -255,11 +255,11 @@
                                     required
                                 />
                                 <button
-                                    class="btn btn-primary me-2"
+                                    class="btn btn-sm btn-outline-primary me-2"
                                     type="submit">Save</button
                                 >
                                 <button
-                                    class="btn btn-secondary"
+                                    class="btn btn-sm btn-outline-secondary ms-2"
                                     on:click={() => (editingTodo = null)}
                                 >
                                     Cancel
@@ -280,14 +280,6 @@
                                 {todo.description}
                             </span>
                             <div class="ms-auto">
-                                <a
-                                    class="btn btn-sm btn-outline-secondary me-2"
-                                    href={`/todos/${todo.id}`}
-                                    target="_blank"
-                                    title="Open in new tab"
-                                >
-                                    <i class="bi bi-box-arrow-up-right"></i>
-                                </a>
                                 <button
                                     class="btn btn-sm btn-outline-secondary"
                                     type="button"
@@ -295,6 +287,18 @@
                                     on:click={() => (editingTodo = { ...todo })}
                                 >
                                     Edit
+                                </button>
+                                <button
+                                    class="btn btn-sm btn-outline-secondary me-2"
+                                    disabled={todo.status === 1}
+                                    on:click={() =>
+                                        window.open(
+                                            `/todos/${todo.id}`,
+                                            "_blank",
+                                        )}
+                                    title="Open in new tab"
+                                >
+                                    <i class="bi bi-box-arrow-up-right"></i>
                                 </button>
                                 <button
                                     class="btn btn-sm btn-danger ms-2"
