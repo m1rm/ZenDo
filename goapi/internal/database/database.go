@@ -30,6 +30,8 @@ type Service interface {
 	DeleteTodo(id int64) (int64, error)
 
 	InsertTodo(todo *models.Todo) error
+	
+	UpdateTodo(todo *models.Todo) error
 }
 
 type service struct {
@@ -193,4 +195,15 @@ func (s *service) DeleteTodo(id int64) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func (s *service) UpdateTodo(todo *models.Todo) error {
+    query := "UPDATE `todos` SET `description` = ?, `status` = ? WHERE `id` = ?;"
+
+    _, err := s.db.ExecContext(context.Background(), query, todo.Description, todo.Status, todo.Id)
+    if err != nil {
+        return fmt.Errorf("updateTodo %d: %v", todo.Id, err)
+    }
+
+    return nil
 }

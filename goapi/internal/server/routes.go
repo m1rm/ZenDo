@@ -20,6 +20,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /todos/{id}", s.handleGetTodo)
 	mux.HandleFunc("OPTIONS /todos/{id}", handleOptionsRequest)
 	mux.HandleFunc("POST /todos", s.handleAddTodo)
+	mux.HandleFunc("PUT /todos/{id}", s.handleUpdateTodo)
 	mux.HandleFunc("DELETE /todos/{id}", s.handleDeleteTodo)
 
 	return mux
@@ -109,6 +110,38 @@ func (s *Server) handleAddTodo(w http.ResponseWriter, req *http.Request) {
 
 	if err := s.db.InsertTodo(&todo); err != nil {
 		http.Error(w, fmt.Sprintf("error saving todo in DB, %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	response, err := json.Marshal(&todo)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error building the response, %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	handleSuccessResponse(&w)
+	w.Write(response)
+}
+
+func (s *Server) handleUpdateTodo(w http.ResponseWriter, req *http.Request) {
+	enableCors(&w)
+
+	var todo models.Todo
+	if err := json.NewDecoder(req.Body).Decode(&todo); err != nil {
+		http.Error(w, fmt.Sprintf("error parsing transmitted data, %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	queryParam := req.PathValue("id")
+	id, err := strconv.Atoi(queryParam)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error parsing id query param, %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	todo.Id = int64(id) // Ensure the ID is set correctly
+	if err := s.db.UpdateTodo(&todo); err != nil {
+		http.Error(w, fmt.Sprintf("error updating todo in DB, %v", err), http.StatusInternalServerError)
 		return
 	}
 
