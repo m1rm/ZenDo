@@ -26,7 +26,7 @@
         // Clear the confirmation message after 1 second
         setTimeout(() => {
             showConfirmation = false;
-        }, 1000);
+        }, 3000);
     }
 
     let textInput = "";
@@ -71,8 +71,7 @@
             const response = await fetch(`http://localhost:8090/todos/${id}`, {
                 method: "DELETE",
             });
-            console.log("response: ", response);
-            console.log("response.ok: ", response.ok);
+
             if (!response.ok) {
                 await builtErrorMessage("delete", "API response was not ok.");
                 throw new Error("API response was not ok when deleting todo.");
@@ -96,7 +95,7 @@
         class="position-fixed top-50 start-50 translate-middle"
     >
         <div
-            class="toast show bg-info"
+            class="toast show bg-body-secondary"
             role="alert"
             aria-live="assertive"
             aria-atomic="true"
@@ -176,7 +175,7 @@
         width: 100%;
         height: 5px; /* Height of the progress bar */
         background-color: #4caf50; /* Color of the progress bar */
-        animation: decrease 1s linear forwards;
+        animation: decrease 3s linear forwards;
     }
 
     @keyframes decrease {
