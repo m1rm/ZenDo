@@ -1,11 +1,11 @@
 <script>
-    import { onMount } from "svelte";
-    import { todoData } from "../../stores/todos";
+    import { onMount } from 'svelte';
+    import { todoData } from '../../stores/todos';
     /// <reference path="../../types.d.ts" />
 
     let loading = true;
-    let textInput = "";
-    let errorMessage = "";
+    let textInput = '';
+    let errorMessage = '';
     let showConfirmation = false;
     /**
      * @type {Todo | null}
@@ -13,17 +13,17 @@
     let editingTodo = null;
 
     onMount(async () => {
-        try {
-            const response = await fetch("http://localhost:8090/todos");
-            if (!response.ok) throw new Error("Network response was not ok");
-            const data = await response.json();
-            todoData.set(data);
-        } catch (error) {
-            console.error("Fetch error:", error);
-            todoData.set([]);
-        } finally {
-            loading = false;
-        }
+      try {
+        const response = await fetch('http://localhost:8090/todos');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        todoData.set(data);
+      } catch (error) {
+        console.error('Fetch error:', error);
+        todoData.set([]);
+      } finally {
+        loading = false;
+      }
     });
 
     /**
@@ -32,43 +32,43 @@
      * @param {string} cause
      */
     async function builtErrorMessage(action, cause) {
-        errorMessage = `Failed to ${action} todo: ${cause}`;
-        showConfirmation = true;
-        setTimeout(() => {
-            showConfirmation = false;
-        }, 3000);
+      errorMessage = `Failed to ${action} todo: ${cause}`;
+      showConfirmation = true;
+      setTimeout(() => {
+        showConfirmation = false;
+      }, 3000);
     }
 
     /**
      * @param {Event} event
      */
     async function handleSubmit(event) {
-        event.preventDefault();
-        loading = true;
+      event.preventDefault();
+      loading = true;
 
-        try {
-            const response = await fetch("/api/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ description: textInput }),
-            });
+      try {
+        const response = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description: textInput }),
+        });
 
-            if (!response.ok) {
-                await builtErrorMessage("submit", "API response was not ok.");
-                throw new Error(
-                    "API response was not ok when submitting new todo.",
-                );
-            } else {
-                const data = await response.json();
-                todoData.update((currentData) => [...currentData, data]);
-                textInput = ""; // Clear the input after successful submission
-            }
-        } catch (error) {
-            await builtErrorMessage("submit", "An unexpected error occured.");
-            console.error("Error:", error);
-        } finally {
-            loading = false;
+        if (!response.ok) {
+          await builtErrorMessage('submit', 'API response was not ok.');
+          throw new Error(
+            'API response was not ok when submitting new todo.',
+          );
+        } else {
+          const data = await response.json();
+          todoData.update((currentData) => [...currentData, data]);
+          textInput = ''; // Clear the input after successful submission
         }
+      } catch (error) {
+        await builtErrorMessage('submit', 'An unexpected error occured.');
+        console.error('Error:', error);
+      } finally {
+        loading = false;
+      }
     }
 
     /**
@@ -76,69 +76,69 @@
      * @param {number} id
      */
     async function deleteTodo(id) {
-        loading = true;
+      loading = true;
 
-        try {
-            const response = await fetch(`http://localhost:8090/todos/${id}`, {
-                method: "DELETE",
-            });
+      try {
+        const response = await fetch(`http://localhost:8090/todos/${id}`, {
+          method: 'DELETE',
+        });
 
-            if (!response.ok) {
-                await builtErrorMessage("delete", "API response was not ok.");
-                throw new Error("API response was not ok when deleting todo.");
-            } else {
-                todoData.update((currentData) =>
-                    currentData.filter((todo) => todo.id !== id),
-                );
-            }
-        } catch (error) {
-            await builtErrorMessage("delete", "An unexpected error occured.");
-            console.error("Error:", error);
-        } finally {
-            loading = false;
+        if (!response.ok) {
+          await builtErrorMessage('delete', 'API response was not ok.');
+          throw new Error('API response was not ok when deleting todo.');
+        } else {
+          todoData.update((currentData) =>
+            currentData.filter((todo) => todo.id !== id),
+          );
         }
+      } catch (error) {
+        await builtErrorMessage('delete', 'An unexpected error occured.');
+        console.error('Error:', error);
+      } finally {
+        loading = false;
+      }
     }
 
     /**
      * @param {Todo} todo
      */
     async function toggleTodoStatus(todo) {
-        const updatedStatus = todo.status === 1 ? 0 : 1;
-        try {
-            const response = await fetch(
-                `http://localhost:8090/todos/${todo.id}`,
-                {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ ...todo, status: updatedStatus }),
-                },
-            );
+      const updatedStatus = todo.status === 1 ? 0 : 1;
+      try {
+        const response = await fetch(
+          `http://localhost:8090/todos/${todo.id}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...todo, status: updatedStatus }),
+          },
+        );
 
-            if (!response.ok) {
-                await builtErrorMessage(
-                    "update status",
-                    "API response was not ok.",
-                );
-                throw new Error(
-                    "API response was not ok when updating todo status.",
-                );
-            } else {
-                todoData.update((todos) =>
-                    todos.map((t) => {
-                        if (t.id === todo.id) {
-                            return { ...t, status: updatedStatus };
-                        }
-                        return t;
-                    }),
-                );
-            }
-        } catch (error) {
-            await builtErrorMessage(
-                "update status",
-                "An unexpected error occured.",
-            );
-            console.error("Error:", error);
+        if (!response.ok) {
+          await builtErrorMessage(
+            'update status',
+            'API response was not ok.',
+          );
+          throw new Error(
+            'API response was not ok when updating todo status.',
+          );
+        } else {
+          todoData.update((todos) =>
+            todos.map((t) => {
+              if (t.id === todo.id) {
+                return { ...t, status: updatedStatus };
+              }
+              return t;
+            }),
+          );
         }
+      } catch (error) {
+        await builtErrorMessage(
+          'update status',
+          'An unexpected error occured.',
+        );
+        console.error('Error:', error);
+      }
     }
 
     /**
@@ -146,35 +146,35 @@
      * @param {Event} event
      */
     async function handleEditSubmit(event) {
-        event.preventDefault();
-        loading = true;
+      event.preventDefault();
+      loading = true;
 
-        try {
-            const response = await fetch(
-                `http://localhost:8090/todos/${editingTodo.id}`,
-                {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(editingTodo),
-                },
-            );
+      try {
+        const response = await fetch(
+          `http://localhost:8090/todos/${editingTodo.id}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(editingTodo),
+          },
+        );
 
-            if (!response.ok) {
-                await builtErrorMessage("edit", "API response was not ok.");
-                throw new Error("API response was not ok when editing todo.");
-            } else {
-                const data = await response.json();
-                todoData.update((todos) =>
-                    todos.map((t) => (t.id === editingTodo.id ? data : t)),
-                );
-                editingTodo = null;
-            }
-        } catch (error) {
-            await builtErrorMessage("edit", "An unexpected error occured.");
-            console.error("Error:", error);
-        } finally {
-            loading = false;
+        if (!response.ok) {
+          await builtErrorMessage('edit', 'API response was not ok.');
+          throw new Error('API response was not ok when editing todo.');
+        } else {
+          const data = await response.json();
+          todoData.update((todos) =>
+            todos.map((t) => (t.id === editingTodo.id ? data : t)),
+          );
+          editingTodo = null;
         }
+      } catch (error) {
+        await builtErrorMessage('edit', 'An unexpected error occured.');
+        console.error('Error:', error);
+      } finally {
+        loading = false;
+      }
     }
 </script>
 
@@ -274,8 +274,8 @@
                             />
                             <span
                                 class="card-text {todo.status === 1
-                                    ? 'text-decoration-line-through'
-                                    : ''}"
+                                  ? 'text-decoration-line-through'
+                                  : ''}"
                             >
                                 {todo.description}
                             </span>
@@ -292,10 +292,10 @@
                                     class="btn btn-sm btn-outline-secondary me-2"
                                     disabled={todo.status === 1}
                                     on:click={() =>
-                                        window.open(
-                                            `/todos/${todo.id}`,
-                                            "_blank",
-                                        )}
+                                      window.open(
+                                        `/todos/${todo.id}`,
+                                        '_blank',
+                                      )}
                                     title="Open in new tab"
                                 >
                                     <i class="bi bi-box-arrow-up-right"></i>

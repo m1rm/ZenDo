@@ -1,25 +1,25 @@
 <script>
-    import { onMount } from "svelte";
-    import { page } from "$app/stores";
-    import { selectedTodo } from "../../../stores/todos";
+    import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+    import { selectedTodo } from '../../../stores/todos';
 
     let loading = true; // State to manage loading spinner
     let showConfirmation = false; // State to manage confirmation message
-    let confirmationMessage = ""; // Message to display in confirmation
+    let confirmationMessage = ''; // Message to display in confirmation
     let isError = false; // State to manage error message
 
     onMount(async () => {
-        const id = $page.params.id;
-        try {
-            // Fetch a specific todo
-            const response = await fetch(`http://localhost:8090/todos/${id}`);
-            const data = await response.json();
-            selectedTodo.set(data);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            loading = false; // Set loading to false after data fetch
-        }
+      const id = $page.params.id;
+      try {
+        // Fetch a specific todo
+        const response = await fetch(`http://localhost:8090/todos/${id}`);
+        const data = await response.json();
+        selectedTodo.set(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        loading = false; // Set loading to false after data fetch
+      }
     });
 
     /**
@@ -27,34 +27,34 @@
      * @param {Event} event
      */
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        const id = $page.params.id;
-        const formData = new FormData(event.target);
-        const updatedTodo = {
-            description: formData.get("description"),
-            status: formData.get("status") ? 1 : 0,
-        };
+      event.preventDefault();
+      const id = $page.params.id;
+      const formData = new FormData(event.target);
+      const updatedTodo = {
+        description: formData.get('description'),
+        status: formData.get('status') ? 1 : 0,
+      };
 
-        try {
-            const response = await fetch(`http://localhost:8090/todos/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedTodo),
-            });
-            const data = await response.json();
-            selectedTodo.set(data);
-            confirmationMessage = "Todo updated successfully!";
-            isError = false;
-        } catch (error) {
-            console.log(error);
-            confirmationMessage = "Failed to update Todo.";
-            isError = true;
-        } finally {
-            showConfirmation = true; // Show confirmation message
-            setTimeout(() => (showConfirmation = false), 3000); // Hide after 3 seconds
-        }
+      try {
+        const response = await fetch(`http://localhost:8090/todos/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedTodo),
+        });
+        const data = await response.json();
+        selectedTodo.set(data);
+        confirmationMessage = 'Todo updated successfully!';
+        isError = false;
+      } catch (error) {
+        console.log(error);
+        confirmationMessage = 'Failed to update Todo.';
+        isError = true;
+      } finally {
+        showConfirmation = true; // Show confirmation message
+        setTimeout(() => (showConfirmation = false), 3000); // Hide after 3 seconds
+      }
     };
 </script>
 
