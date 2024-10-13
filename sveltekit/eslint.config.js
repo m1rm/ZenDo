@@ -1,30 +1,29 @@
+import eslintPluginSvelte from 'eslint-plugin-svelte'
+
 export default [
-    {
-        ignores: ['node_modules/', 'dist/', '.pnpm-store', '.svelte-kit'],
-        languageOptions: {
-            ecmaVersion: 12,
-            sourceType: 'module',
-        },
-        linterOptions: {
-            reportUnusedDisableDirectives: true,
-        },
-        rules: {
-            indent: ['error', 4],
-            'linebreak-style': ['error', 'unix'],
-            quotes: ['error', 'single'],
-            semi: ['error', 'always'],
-        },
-        files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
-        plugins: {},
-        settings: {},
+  ...eslintPluginSvelte.configs['flat/recommended'],
+  {
+    ignores: [
+      'svelte.config.js',
+      'vite.config.js',
+      'eslint.config.js'
+    ],
+    languageOptions: {
+      ecmaVersion: 12,
+      sourceType: 'module'
     },
-    {
-        files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
-        languageOptions: {
-            globals: {
-                window: 'readonly',
-                document: 'readonly',
-            },
-        },
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
     },
+    rules: {
+      indent: ['error', 2],
+      quotes: ['error', 'single']
+    },
+    files: [
+      '*.js',
+      '*.ts',
+      '**/*.svelte',
+      '*.svelte'
+    ],
+  },
 ];
