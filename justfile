@@ -61,6 +61,7 @@ mysql *args:
 eslint-sveltekit *args:
     {{SVELTEKIT-RUN}} pnpm eslint {{args}}
 
-# run go tests
+# run go tests; todo: fixme
+[no-cd]
 test-go *args:
- {{GO-RUN}} go test
+ {{GO-RUN}} go test .goapi/internal/server -v
