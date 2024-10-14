@@ -60,3 +60,7 @@ mysql *args:
 # run eslint on sveltekit app  code
 eslint-sveltekit *args:
     {{SVELTEKIT-RUN}} pnpm eslint {{args}}
+
+# run go tests
+test-go *args:
+ {{GO-RUN}} go test
