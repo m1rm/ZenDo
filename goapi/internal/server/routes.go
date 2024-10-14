@@ -119,7 +119,8 @@ func (s *Server) handleAddTodo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	handleSuccessResponse(&w)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	w.Write(response)
 }
 

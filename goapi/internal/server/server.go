@@ -10,7 +10,7 @@ import (
 )
 
 type Server struct {
-	port int
+	Port int
 
 	db database.Service
 }
@@ -18,14 +18,14 @@ type Server struct {
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi("8090")
 	NewServer := &Server{
-		port: port,
+		Port: port,
 
 		db: database.New(),
 	}
 
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
+		Addr:         fmt.Sprintf(":%d", NewServer.Port),
 		Handler:      NewServer.RegisterRoutes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
