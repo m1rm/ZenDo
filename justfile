@@ -3,7 +3,7 @@ export GID := `id -g`
 
 COMPOSE := 'docker compose -f docker/compose.yml'
 COMPOSE-RUN := COMPOSE + ' run --rm'
-GO-RUN := COMPOSE-RUN + ' go'
+GO-RUN := COMPOSE-RUN + ' --no-deps go'
 SVELTEKIT-RUN := COMPOSE-RUN + ' sveltekit'
 DB-RUN := COMPOSE-RUN + ' -T --no-deps db'
 
@@ -61,7 +61,10 @@ mysql *args:
 eslint-sveltekit *args:
     {{SVELTEKIT-RUN}} pnpm eslint {{args}}
 
-# run go tests
+# run go tests - don't use too often
+# bc. deps are downloaded at each run
+# and thus github could block you
 [no-cd]
+[private]
 test-go *args:
  {{GO-RUN}} go test ./... -v {{args}}
