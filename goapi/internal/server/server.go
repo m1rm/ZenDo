@@ -13,7 +13,7 @@ func NewServer() *http.Server {
 
 	server := &http.Server{
 		Addr:         ":8090",
-		Handler:      rr.RegisterRoutes(),
+		Handler:      rr.GetMux(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,

@@ -25,16 +25,19 @@ func (rr *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	rr.mux.ServeHTTP(w, req)
 }
 
-func (router) NewRouter(db database.Service) router {
-	rr := router{
-		mux: http.NewServeMux(),
+func NewRouter(db database.Service) *router {
+	rr := &router{
 		db: db,
 	}
-
+	rr.mux = rr.registerRoutes()
 	return rr
 }
 
-func (rr *router) RegisterRoutes() *http.ServeMux {
+func (rr *router) GetMux() *http.ServeMux {
+	return rr.mux
+}
+
+func (rr *router) registerRoutes() *http.ServeMux {
 
 	mux := http.NewServeMux()
 
