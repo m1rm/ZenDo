@@ -1,4 +1,4 @@
-package server
+package router
 
 import (
 	"encoding/json"
@@ -6,28 +6,56 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-
+	"zendo/internal/database"
 	"zendo/models"
 )
 
-func (s *Server) RegisterRoutes() http.Handler {
+type Router interface  {
+	http.Handler
+	database.Service
+	registerRoutes() *http.ServeMux
+}
+
+type router struct {
+	mux *http.ServeMux
+	db database.Service
+}
+
+func (rr *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	rr.mux.ServeHTTP(w, req)
+}
+
+func NewRouter(db database.Service) *router {
+	rr := &router{
+		db: db,
+	}
+	rr.mux = rr.registerRoutes()
+	return rr
+}
+
+func (rr *router) GetMux() *http.ServeMux {
+	return rr.mux
+}
+
+func (rr *router) registerRoutes() *http.ServeMux {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/health", s.healthHandler)
+	mux.HandleFunc("/health", rr.HealthHandler)
 
-	mux.HandleFunc("GET /todos", s.handleGetTodos)
-	mux.HandleFunc("GET /todos/{id}", s.handleGetTodo)
-	mux.HandleFunc("OPTIONS /todos/{id}", handleOptionsRequest)
-	mux.HandleFunc("POST /todos", s.handleAddTodo)
-	mux.HandleFunc("PUT /todos/{id}", s.handleUpdateTodo)
-	mux.HandleFunc("DELETE /todos/{id}", s.handleDeleteTodo)
+	mux.HandleFunc("GET /todos", rr.GetTodosHandler)
+	mux.HandleFunc("GET /todos/{id}", rr.GetTodoHandler)
+	mux.HandleFunc("OPTIONS /todos/{id}", rr.OptionsRequestHandler)
+	mux.HandleFunc("POST /todos", rr.AddTodoHandler)
+	mux.HandleFunc("PUT /todos/{id}", rr.UpdateTodoHandler)
+	mux.HandleFunc("DELETE /todos/{id}", rr.DeleteTodoHandler)
 
 	return mux
 }
 
-func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp, err := json.Marshal(s.db.Health())
+func (rr router) HealthHandler(w http.ResponseWriter, r *http.Request) {
+
+	jsonResp, err := json.Marshal(rr.db.Health())
 
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
@@ -42,20 +70,20 @@ func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
-func handleSuccessResponse(w *http.ResponseWriter) {
+func successResponseHandler(w *http.ResponseWriter) {
 	(*w).Header().Set("Content-Type", "application/json")
 	(*w).WriteHeader(http.StatusOK)
 }
 
-func handleOptionsRequest(w http.ResponseWriter, req *http.Request) {
+func (rr router) OptionsRequestHandler(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (s *Server) handleGetTodos(w http.ResponseWriter, req *http.Request) {
+func (rr router) GetTodosHandler(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 
-	todos, err := s.db.GetTodos()
+	todos, err := rr.db.GetTodos()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error querying the database, %v", err), http.StatusInternalServerError)
 		return
@@ -67,11 +95,11 @@ func (s *Server) handleGetTodos(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	handleSuccessResponse(&w)
+	successResponseHandler(&w)
 	w.Write(response)
 }
 
-func (s *Server) handleGetTodo(w http.ResponseWriter, req *http.Request) {
+func (rr router) GetTodoHandler(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 
 	queryParam := req.PathValue("id")
@@ -81,7 +109,7 @@ func (s *Server) handleGetTodo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	todo, err := s.db.GetTodo(int64(id))
+	todo, err := rr.db.GetTodo(int64(id))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error querying the database, %v", err), http.StatusInternalServerError)
 		return
@@ -93,12 +121,12 @@ func (s *Server) handleGetTodo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	handleSuccessResponse(&w)
+	successResponseHandler(&w)
 	w.Write(response)
 }
 
 // @see https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
-func (s *Server) handleAddTodo(w http.ResponseWriter, req *http.Request) {
+func (rr router) AddTodoHandler(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 
 	var todo models.Todo
@@ -108,7 +136,7 @@ func (s *Server) handleAddTodo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.db.InsertTodo(&todo); err != nil {
+	if err := rr.db.InsertTodo(&todo); err != nil {
 		http.Error(w, fmt.Sprintf("error saving todo in DB, %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -124,7 +152,7 @@ func (s *Server) handleAddTodo(w http.ResponseWriter, req *http.Request) {
 	w.Write(response)
 }
 
-func (s *Server) handleUpdateTodo(w http.ResponseWriter, req *http.Request) {
+func (rr router) UpdateTodoHandler(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 
 	var todo models.Todo
@@ -141,7 +169,7 @@ func (s *Server) handleUpdateTodo(w http.ResponseWriter, req *http.Request) {
 	}
 
 	todo.Id = int64(id) // Ensure the ID is set correctly
-	if err := s.db.UpdateTodo(&todo); err != nil {
+	if err := rr.db.UpdateTodo(&todo); err != nil {
 		http.Error(w, fmt.Sprintf("error updating todo in DB, %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -152,11 +180,11 @@ func (s *Server) handleUpdateTodo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	handleSuccessResponse(&w)
+	successResponseHandler(&w)
 	w.Write(response)
 }
 
-func (s *Server) handleDeleteTodo(w http.ResponseWriter, req *http.Request) {
+func (rr router) DeleteTodoHandler(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w)
 
 	queryParam := req.PathValue("id")
@@ -165,7 +193,7 @@ func (s *Server) handleDeleteTodo(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, fmt.Sprintf("error parsing id query param, %v", err), http.StatusInternalServerError)
 		return
 	}
-	_, err = s.db.DeleteTodo(int64(id))
+	_, err = rr.db.DeleteTodo(int64(id))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error deleting todo in DB, %v", err), http.StatusInternalServerError)
 		return
