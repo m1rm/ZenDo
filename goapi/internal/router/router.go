@@ -64,24 +64,24 @@ func (rr router) HealthHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-func (rr router) enableCors(w *http.ResponseWriter) {
+func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
-func (rr router) SuccessResponseHandler(w *http.ResponseWriter) {
+func successResponseHandler(w *http.ResponseWriter) {
 	(*w).Header().Set("Content-Type", "application/json")
 	(*w).WriteHeader(http.StatusOK)
 }
 
 func (rr router) OptionsRequestHandler(w http.ResponseWriter, req *http.Request) {
-	rr.enableCors(&w)
+	enableCors(&w)
 	w.WriteHeader(http.StatusNoContent)
 }
 
 func (rr router) GetTodosHandler(w http.ResponseWriter, req *http.Request) {
-	rr. enableCors(&w)
+	enableCors(&w)
 
 	todos, err := rr.db.GetTodos()
 	if err != nil {
@@ -95,12 +95,12 @@ func (rr router) GetTodosHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	rr.SuccessResponseHandler(&w)
+	successResponseHandler(&w)
 	w.Write(response)
 }
 
 func (rr router) GetTodoHandler(w http.ResponseWriter, req *http.Request) {
-	rr.enableCors(&w)
+	enableCors(&w)
 
 	queryParam := req.PathValue("id")
 	id, err := strconv.Atoi(queryParam)
@@ -121,13 +121,13 @@ func (rr router) GetTodoHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	rr.SuccessResponseHandler(&w)
+	successResponseHandler(&w)
 	w.Write(response)
 }
 
 // @see https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
 func (rr router) AddTodoHandler(w http.ResponseWriter, req *http.Request) {
-	rr.enableCors(&w)
+	enableCors(&w)
 
 	var todo models.Todo
 
@@ -153,7 +153,7 @@ func (rr router) AddTodoHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func (rr router) UpdateTodoHandler(w http.ResponseWriter, req *http.Request) {
-	rr.enableCors(&w)
+	enableCors(&w)
 
 	var todo models.Todo
 	if err := json.NewDecoder(req.Body).Decode(&todo); err != nil {
@@ -180,12 +180,12 @@ func (rr router) UpdateTodoHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	rr.SuccessResponseHandler(&w)
+	successResponseHandler(&w)
 	w.Write(response)
 }
 
 func (rr router) DeleteTodoHandler(w http.ResponseWriter, req *http.Request) {
-	rr.enableCors(&w)
+	enableCors(&w)
 
 	queryParam := req.PathValue("id")
 	id, err := strconv.Atoi(queryParam)
