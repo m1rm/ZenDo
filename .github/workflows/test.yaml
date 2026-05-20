@@ -9,18 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231 #v6
+        with:
+          persist-credentials: false
 
       - name: Install just
-        uses: extractions/setup-just@v1
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 #v4
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@670825a89dc0abd596e7a3abd0f5e3f6e5faf37c #v6
         with:
-          node-version: "22"
+          node-version: 24
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 #v6
         with:
           version: 9.1.4
 
