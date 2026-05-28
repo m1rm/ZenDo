@@ -1,14 +1,16 @@
 import eslintPluginSvelte from 'eslint-plugin-svelte'
 
 export default [
-  ...eslintPluginSvelte.configs['flat/recommended'],
   {
     ignores: [
       'svelte.config.js',
       'vite.config.js',
       'eslint.config.js',
-      '/sveltekit/.svelte-kit/generated/root.svelte'
+      '.svelte-kit/**',
     ],
+  },
+  ...eslintPluginSvelte.configs['flat/recommended'],
+  {
     languageOptions: {
       ecmaVersion: 12,
       sourceType: 'module'
