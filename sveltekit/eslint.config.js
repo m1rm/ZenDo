@@ -6,7 +6,8 @@ export default [
     ignores: [
       'svelte.config.js',
       'vite.config.js',
-      'eslint.config.js'
+      'eslint.config.js',
+      '/sveltekit/.svelte/generated/root.svelte'
     ],
     languageOptions: {
       ecmaVersion: 12,
